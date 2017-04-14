@@ -73,15 +73,16 @@ class Obstacle:
 
 
 class Environment:
-    def __init__(self,x,y):
+    def __init__(self,x,y,obs,start,goal):
         self.obstacles=[]
         self.x_max=x
         self.y_max=y
+        self.obstacles=obs
+        self.start=start
+        self.goal=goal
     def __str__(self):
         output="Environment: rectangle from (0,0) to ("+str(self.x_max)+","+str(self.y_max)+")\n"
         for obs in self.obstacles:
             output=output+str(obs)+"\n"
         return output
 
-    def addObstacle(self,obstacle):
-        self.obstacles.append(obstacle)
