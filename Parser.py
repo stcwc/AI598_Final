@@ -30,13 +30,12 @@ def parse(path):
 
     obstacles = []
     for i in temp:
-        t = helper(i)
+        t = i.replace("(","").replace(")","").replace("\n","").split(",")
         p = []
         for j in range(len(t)//2):
             p.append(Point(t[j*2],t[j*2+1]))
-        obstacles.append(p)
-    obs = Obstacle(obstacles)
-    return Environment(x_max = x_max, y_max = y_max, obs = obs, start = start, goal = goal)
+        obstacles.append(Obstacle(p))
+    return Environment(x_max = x_max, y_max = y_max, obs = obstacles, start = start, goal = goal)
 
 
 
