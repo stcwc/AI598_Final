@@ -3,7 +3,9 @@ from Util import Point, Graph, Obstacle, Environment
 
 
 p=Point(1,2)
-b=Point(4,3)
+b=Point(1.0,2.0)
+print(p==b)
+
 
 g=Graph(p)
 #g.addVertex(b)
@@ -19,6 +21,6 @@ print(str(o))
 print(str(o.getVertex(4)))
 print(str(o.getIndex(Point(3,9))))
 
-e=Environment(300,200)
-e.addObstacle(o)
-print(str(e))
+#e=Environment(300,200)
+#e.addObstacle(o)
+#print(str(e))
