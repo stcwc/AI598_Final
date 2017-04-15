@@ -16,7 +16,8 @@ def RRT(E):
 	G.addVertex(intersection)
 	G.addEdge((0,1))
 	for i in range(100):
-		x=random.uniform(0, E.x_max)  
-		y=random.uniform(0, E.y_max)
+		new_vertex=Point(random.uniform(0, E.x_max),random.uniform(0, E.y_max))
+		for edge in G.edges:
+			nearest_point=NearestPoint(G.IndexVertex[edge[0]],G.IndexVertex[edge[0]])
 
 E=parse("test.txt")
