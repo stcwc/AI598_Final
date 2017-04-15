@@ -25,7 +25,7 @@ def parse(path):
             break
         temp.append(line)
     lastline = (temp[-1]).replace("(","").replace(")","").replace("\n","").split(",")
-    start, goal = Point(lastline[0],lastline[1]),Point(lastline[2],lastline[3])
+    start, goal = Point(float(lastline[0]),float(lastline[1])),Point(float(lastline[2]),float(lastline[3]))
     temp = temp[:-1]
 
     obstacles = []
@@ -33,7 +33,7 @@ def parse(path):
         t = i.replace("(","").replace(")","").replace("\n","").split(",")
         p = []
         for j in range(len(t)//2):
-            p.append(Point(t[j*2],t[j*2+1]))
+            p.append(Point(float(t[j*2]),float(t[j*2+1])))
         obstacles.append(Obstacle(p))
     return Environment(x = x_max, y = y_max, obs = obstacles, start = start, goal = goal)
 
