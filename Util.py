@@ -60,7 +60,7 @@ class Obstacle:
         self.vertexNumber=len(points)
         self.number=len(points)
     def __str__(self):
-        output="Obstical:"
+        output="Obstacle:"
         for i in range(self.number):
             output=output+str(self.IndexVertex[i+1])+" "
         return output
@@ -84,5 +84,6 @@ class Environment:
         output="Environment: rectangle from (0,0) to ("+str(self.x_max)+","+str(self.y_max)+")\n"
         for obs in self.obstacles:
             output=output+str(obs)+"\n"
+        output=output+"start point:"+str(self.start)+" end point:"+str(self.goal)+"\n"
         return output
 
