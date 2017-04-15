@@ -1,0 +1,22 @@
+from Util import Point, Graph, Obstacle, Environment
+from Geometry import GetIntersection, NearestPoint
+import random
+from Parser import parse
+
+def RRT(E):
+	G=Graph(E.start)
+	#add first vertex to graph
+	new_vertex=Point(random.uniform(0, E.x_max),random.uniform(0, E.y_max))
+	intersection=Point(new_vertex.x,new_vertex.y)
+	for obs in E.obstacles:
+		for index in range(obs.number):
+			inter=GetIntersection(E.start,new_vertex,obs.IndexVertex[index-1],obs.IndexVertex[index])
+			if inter!=Point(-1,-1):
+				intersection=intersection if ((intersection.x-E.start.x)**2+(intersection.y-E.start.y)**2)<((inter.x-E.start.x)**2+(inter.y-E.start.y)**2) else inter
+	G.addVertex(intersection)
+	G.addEdge((0,1))
+	for i in range(100):
+		x=random.uniform(0, E.x_max)  
+		y=random.uniform(0, E.y_max)
+
+E=parse("test.txt")
