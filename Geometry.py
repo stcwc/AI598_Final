@@ -1,6 +1,20 @@
+"""
+Created on Thu Apr 13 2017
+
+Usage:
+# defin some geometry functions
+# GetIntersection(p1,p2,q1,q2) return the intersection of line segment p1-p2 and q1-q2
+# NearestPoint(p1,p2,q) return the nearest point in the line segment p1-p2 to point q
+
+@author: YI HOU
+"""
+
 from Util import Point, Graph, Obstacle, Environment
 
 def GetIntersection(p1,p2,q1,q2):
+	#return the intersection of line segment p1-p2 and q1-q2
+	#return Point(-1,-1) if there is no intersection
+	#return Point(-2,-2) if the two line segments overlap
 	if p1.y==p2.y:
 		if q1.y==q2.y:# p1.y==p2.y  &  q1.y==q2.y:
 			if q1.y!=p1.y:
@@ -49,14 +63,16 @@ def GetIntersection(p1,p2,q1,q2):
 		return Point(-1,-1)
 
 def NearestPoint(p1,p2,q):
-	# q is in the line  &  the line is horizontal
-	if p1.y!=p2.y and q.x==(p1.x-p2.x)*(q.y-p1.y)/(p1.y-p2.y)+p1.x : 
+	# return the nearest point in the line segment p1-p2 to point q
+	# return Point(-1,-1) if point q is in the line segment p1-p2
+	if p1.y!=p2.y and q.x==(p1.x-p2.x)*(q.y-p1.y)/(p1.y-p2.y)+p1.x : 	# q is in the line  &  the line is horizontal
 		# q is NOT in the line segment
 		if q.y>max(p1.y,p2.y) or q.y<min(p1.y,p2.y) :
 			return Point(((p1.x-p2.x)*(max(p1.y,p2.y)-p1.y)/(p1.y-p2.y)+p1.x),max(p1.y,p2.y)) if q.y>max(p1.y,p2.y) else Point(((p1.x-p2.x)*(min(p1.y,p2.y)-p1.y)/(p1.y-p2.y)+p1.x),min(p1.y,p2.y))
 		# q is in the line segment
 		else:
 			print("point"+str(q)+"is in the line segment"+str(p1)+"-"+str(p2))
+			return Point(-1,-1)
 	# q is in the line  &  the line is NOT horizontal
 	elif p1.y==p2.y==q.y:
 		# q is NOT in the line segment
@@ -65,6 +81,7 @@ def NearestPoint(p1,p2,q):
 		# q is in the line segment
 		else:
 			print("point"+str(q)+"is in the line segment"+str(p1)+"-"+str(p2))
+			return Point(-1,-1)
 	# q is NOT in the line 
 	else:
 		if p1.y==p2.y: #horizontal line
@@ -89,4 +106,4 @@ def NearestPoint(p1,p2,q):
 		
 
 #print(intersection(Point(0,0),Point(1,1),Point(0,1),Point(1,0)))
-print(NearestPoint(Point(0,0),Point(1,1),Point(0,5)))
+#print(NearestPoint(Point(0,0),Point(1,1),Point(0,5)))
