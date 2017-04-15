@@ -35,7 +35,7 @@ def parse(path):
         for j in range(len(t)//2):
             p.append(Point(t[j*2],t[j*2+1]))
         obstacles.append(Obstacle(p))
-    return Environment(x_max = x_max, y_max = y_max, obs = obstacles, start = start, goal = goal)
+    return Environment(x = x_max, y = y_max, obs = obstacles, start = start, goal = goal)
 
 
 
