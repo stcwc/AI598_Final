@@ -1,7 +1,18 @@
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 25 20:00:11 2017
+
+Usage:
+Achieve Vertical Cell Decomposition and RRT
+
+@author: YI
+"""
+
 from Util import Point, Graph, Obstacle, Environment, SweepLine
 from Geometry import GetIntersection, NearestPoint
 import random
 from Parser import parse
+from A_star import A_star
 import sys
 
 def RRT(E, G, I):
@@ -370,6 +381,7 @@ E = parse("test3.txt")
 print(str(E))
 G = Graph(E.start)
 VCD(E,G)
-
-
 print("\n\n"+str(G))
+
+path=A_star(G, 1, 27)
+print("\n\n",path)
