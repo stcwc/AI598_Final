@@ -1,5 +1,14 @@
-#defin the class of Point, Graph, Obstacle, Environment
-#Author: YI
+# -*- coding: utf-8 -*-
+"""
+Created on Sat Mar 25 20:00:11 2017
+
+Usage:
+define the classes of Point, Graph, Obstacle, Environment.
+
+@author: YI
+"""
+
+import sys
 
 class Point:
     def __init__(self,x,y):
