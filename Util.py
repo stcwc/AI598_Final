@@ -9,6 +9,7 @@ define the classes of Point, Graph, Obstacle, Environment.
 """
 
 import sys
+import random
 
 class Point:
     def __init__(self,x,y):
@@ -102,10 +103,10 @@ class Obstacle:
 
 class Environment:
     def __init__(self,x,y,obs,start,goal):
-        self.obstacles=[]
         self.x_max=x
         self.y_max=y
         self.obstacles=obs
+        self.checkObstacleConflict()  # Deal with conflict, in which there are more than two vertices on a vertical line, namely, share the same x.
         self.start=start
         self.goal=goal
     def __str__(self):
@@ -114,6 +115,20 @@ class Environment:
             output=output+str(obs)+"\n"
         output=output+"start point:"+str(self.start)+" end point:"+str(self.goal)+"\n"
         return output
+        
+    def checkObstacleConflict(self):
+        # Check if there are more than two vertices on a vertical line, namely, share the same x.
+        vx = set()
+        for obs in self.obstacles:
+            for v in obs.VertexIndex:
+                if v.x in vx:
+                    rand=random.uniform(-0.01,0.01)
+                    v.x+=rand
+                    print("[__init__ in Environment] One vertex conflict solved by adding a random epislon "+str(rand))
+                vx.add(v.x)
+                    
+
+        
 
 class SweepLine:
     def __init__(self,x,middle,vertex,type):

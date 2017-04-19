@@ -15,9 +15,10 @@ def parse(path):
 
     file = open(path)
     line = file.readline()
+    line1=line.replace("(","").replace(")","").replace("\n","").split(",")
+    
     #boundary = Point(300,200)  # boundary is fixed in this question.
-    x_max, y_max = 300, 200  # boundary is fixed in this question.
-
+    x_max, y_max = int(line1[4]), int(line1[5])  # boundary is fixed in this question.
     temp = []
     while True:
         line = file.readline()

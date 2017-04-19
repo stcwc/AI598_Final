@@ -379,9 +379,12 @@ def VCD(E, G):
 random.seed(1)
 E = parse("test3.txt")
 print(str(E))
+'''
+print(str(E))
 G = Graph(E.start)
 VCD(E,G)
 print("\n\n"+str(G))
 
 path=A_star(G, 1, 27)
 print("\n\n",path)
+'''
