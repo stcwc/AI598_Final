@@ -9,8 +9,27 @@ class Point:
         return ("("+str(self.x)+","+str(self.y)+")")
     def __eq__(self,other):
         return other.x==self.x and other.y==self.y
+    def __cmp__(self,other):
+        if self.x==other.x and self.y==other.y:  
+            return 0
+        elif self.x<other.x or (self.x==other.x and self.y<other.y):  
+            return -1
+        elif self.x>other.x or (self.x==other.x and self.y>other.y):  
+            return 1 
+    def __lt__(self,other):
+        if self.x<other.x or (self.x==other.x and self.y<other.y): 
+            return 1
+        else:
+            return 0
+    def __gt__(self,other):
+        if self.x>other.x or (self.x==other.x and self.y>other.y):
+            return 1
+        else:
+            return 0
     def __hash__(self):
         return hash(str(self.x)+","+str(self.y))
+    def distance(self,p): # square of distance 
+        return ((p.x-self.x)**2+(p.y-self.y)**2)
         
 class Graph:
     def __init__(self,p):
@@ -61,7 +80,7 @@ class Obstacle:
         self.number=len(points)
     def __str__(self):
         output="Obstacle:"
-        for i in range(self.number):
+        for i in range(self.vertexNumber):
             output=output+str(self.IndexVertex[i+1])+" "
         return output
 
@@ -87,3 +106,14 @@ class Environment:
         output=output+"start point:"+str(self.start)+" end point:"+str(self.goal)+"\n"
         return output
 
+class SweepLine:
+    def __init__(self,x,middle,vertex,type):
+        self.x=x
+        self.middle=middle
+        self.vertex=vertex
+        self.type=type
+    def __str__(self):
+        output="Sweep Line type="+str(self.type)+" x="+str(self.x)+"\nvertex="+str(self.vertex)+"\nmiddle="+str(self.middle)
+        return output
+    def __eq__(self,other):
+        return self.x==other.x and self.middle==other.middle and self.vertex==other.vertex and self.type==other.type
