@@ -474,21 +474,3 @@ def VCD(E, G):
               Point(pre_l.x, pre_l.middle[1])]))
 
 
-<<<<<<< HEAD
-=======
-random.seed(1)
-E = parse("test4.txt")
-print(str(E))
-G = Graph(E.start)
-#RRT(E,G,10)
-VCD(E,G)
-print("\n\n"+str(G))
-
-path=A_star(G, 0, 1)
-print("\n\n",path)
-
-p=Point(290,290)
-print(str(p.distance(Point(60.0,183.092129464))))
-print(str(p.distance(Point(60.0,183.092129464))))
-
->>>>>>> refs/remotes/origin/master
