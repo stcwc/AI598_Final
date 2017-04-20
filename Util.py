@@ -5,7 +5,7 @@ Created on Sat Mar 25 20:00:11 2017
 Usage:
 define the classes of Point, Graph, Obstacle, Environment.
 
-@author: YI
+@author: YI HOU
 """
 
 import sys
