@@ -18,9 +18,9 @@ class Point:
     def __str__(self):
         return ("("+str(self.x)+","+str(self.y)+")")
     def __eq__(self,other):
-        return other.x==self.x and other.y==self.y
+        return other.x-0.00001<=self.x<=other.x+0.00001 and other.y-0.00001<=self.y<=other.y+0.00001
     def __cmp__(self,other):
-        if self.x==other.x and self.y==other.y:  
+        if other.x-0.00001<=self.x<=other.x+0.00001 and other.y-0.00001<=self.y<=other.y+0.00001:  
             return 0
         elif self.x<other.x or (self.x==other.x and self.y<other.y):  
             return -1
