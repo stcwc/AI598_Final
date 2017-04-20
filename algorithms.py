@@ -65,6 +65,7 @@ def RRT(E, I):
             G.addEdge((G.VertexIndex[nearest_point], G.VertexIndex[intersection]))
     if E.goal not in G.VertexIndex:
         print("Goal cannot be added into the Graph!")
+        print("Please increase the interation number!")
         print("The graph is:\n"+str(G))
         sys.exit()
     return G
@@ -88,8 +89,6 @@ def VCD(E):
     # check each obstacle vertex from left to right
     for i in range(len(all_obs)):
         next_vertex = all_obs[i]
-        for sl in SweepLines:
-            print(str(sl))
         type_vertex = 0
         inter_up = E.y_max
         inter_below = 0
@@ -139,19 +138,13 @@ def VCD(E):
             for index in range(obs.number-1):
                 inter_temp = GetIntersection(Point(next_vertex.x, 0), Point(
                     next_vertex.x, E.y_max), obs.IndexVertex[index+1], obs.IndexVertex[index+2])
-                print("int:"+str(inter_temp))
-                print("line:"+str(Point(next_vertex.x, 0))+"-"+str(Point(next_vertex.x, E.y_max))+" and "+str(obs.IndexVertex[index+1])+"-"+str(obs.IndexVertex[index+2]))
                 if next_vertex.y < inter_temp.y < inter_up:
-                    print("new up:"+str(inter_up))
                     inter_up = inter_temp.y
                 elif inter_below < inter_temp.y < next_vertex.y:
-                    print("new below:"+str(inter_below))
                     inter_below = inter_temp.y
             # need sepatate operation for last edge because of CIRCLE
             inter_temp = GetIntersection(Point(next_vertex.x, 0), Point(
                 next_vertex.x, E.y_max), obs.IndexVertex[obs.number], obs.IndexVertex[1])
-            print("int:"+str(inter_temp))
-            print("line:"+str(Point(next_vertex.x, 0))+"-"+str(Point(next_vertex.x, E.y_max))+" and "+str(obs.IndexVertex[index+1])+"-"+str(obs.IndexVertex[index+2]))
             if next_vertex.y < inter_temp.y < inter_up:
                 inter_up = inter_temp.y
             elif inter_below < inter_temp.y < next_vertex.y:
@@ -256,40 +249,32 @@ def VCD(E):
                             if len(middles_y)==0: # if no need to check previous sweep line any more
                                 break
                         if pre_l.type == 1 or pre_l.type == 2 or pre_l.type == 3:
-                            print("pre line type:",pre_l.type)
                             connect_left = []
                             connect_right = []                           
                             for y in middles_y:
                                 for mid in pre_l.middle:
                                     inter = Point(-1, -1)
                                     inter_temp=Point(-1,-1)
-                                    print("now checking mid:"+str(mid)+"and y:"+str(y))
                                     for obs in E.obstacles:
                                         for index in range(obs.number-1):
                                             inter_temp = GetIntersection(Point(pre_l.x, mid), Point(
                                                 next_vertex.x, y), obs.IndexVertex[index+1], obs.IndexVertex[index+2])
                                             if inter_temp != Point(-1, -1):
                                                 inter = inter_temp
-                                                print("obs line: "+str(obs.IndexVertex[index+1])+"-"+str(obs.IndexVertex[index+2]))
                                         # need seperate operation for last edge
                                         inter_temp = GetIntersection(Point(pre_l.x, mid), Point(
                                             next_vertex.x, y), obs.IndexVertex[obs.number], obs.IndexVertex[1])
                                         if inter_temp != Point(-1, -1):
                                             inter = inter_temp
-                                            print("obs line: "+str(obs.IndexVertex[obs.number])+"-"+str(obs.IndexVertex[1]))
                                     # determine if there is interection
                                     if inter == Point(-1, -1):
                                         if mid not in connect_left:
                                             connect_left.append(mid)
                                         if y not in connect_right:
-                                            connect_right.append(y)
-                                    else:
-                                        print("intersection:"+str(inter))
-                            print("connect_right:"+str(connect_right))
+                                            connect_right.append(y)                                  
                             if len(connect_right) != 0:
                                 center = Point((pre_l.x+next_vertex.x)/2, (sum(connect_left)+sum(
                                     connect_right))/(len(connect_right)+len(connect_left)))
-                                print("Add new vertex now:"+str(center))
                                 G.addVertex(center)
                                 for left in connect_left:
                                     # G.addVertex(Point(pre_l.x,left))
@@ -418,11 +403,9 @@ def VCD(E):
             l = SweepLine(next_vertex.x, [], [], type_vertex)
             SweepLines.append(l)
         else:
-            print("wrond type!")
+            print("ERROR: wrong type for SweepLine!")
             sys.exit()
     # add last vertex into graph
-    for sl in SweepLines:
-        print("\n"+str(sl))
     pre_l = SweepLines[-1]
     last_x = (pre_l.x+E.x_max)/2
     last_y = ((pre_l.middle[0]+pre_l.middle[1])/2+E.y_max/2)/2
