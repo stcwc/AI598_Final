@@ -442,7 +442,3 @@ def VCD(E):
     return G
 
 
-<<<<<<< HEAD
-=======
-
->>>>>>> refs/remotes/origin/master

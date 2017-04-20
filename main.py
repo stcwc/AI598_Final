@@ -9,16 +9,14 @@ def main():
     random.seed(1)
     if len(sys.argv)==4 and sys.argv[3]=="VCD":
         E = parse(sys.argv[1])
-        #G = Graph(E.start)
         print("......Doing VCD......")
         G=VCD(E)
         path=A_star(G, 0, 1)
     elif len(sys.argv)==5 and sys.argv[3]=="RRT":
         E = parse(sys.argv[1])
-        G = Graph(E.start)
         I=int(sys.argv[4])
         print("......Doing RRT with "+str(I)+" iterations......")
-        RRT(E,G,I)
+        G = RRT(E,I)
         path=A_star(G, 0, G.VertexNumber-1)
     else:    
         print("[ERROR] Input arguments incorrect. Use command like 'python main.py input.txt output.txt VCD' or 'python main.py input.txt output.txt RRT 1000' and try again.")
