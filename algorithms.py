@@ -11,8 +11,6 @@ Achieve Vertical Cell Decomposition and RRT
 from Util import Point, Graph, Obstacle, Environment, SweepLine
 from Geometry import GetIntersection, NearestPoint
 import random
-from Parser import parse
-from A_star import A_star
 import sys
 
 def RRT(E, G, I):
@@ -40,7 +38,6 @@ def RRT(E, G, I):
                 nearest_point = nearest_temp  # update nearest point and the edge location
                 edgeLocation = edge
                 print("update nearest_temp on the edge:", edge)
-
     #	print("\nfinish searching nearest_point, result:\n")
     #	print("nearest_temp:"+str(nearest_point))
     #	print("edge location:",edgeLocation)
@@ -48,9 +45,14 @@ def RRT(E, G, I):
             # if nearest_point is on the middle of line, should remove original
             # edge and add new vertex and edges
             G.removeEdge(edgeLocation)
+            print("remove edge:"+str(edgeLocation))
             G.addVertex(nearest_point)
+            print("add middle nearest_point:"+str(nearest_point))
             G.addEdge((edgeLocation[0], G.VertexIndex[nearest_point]))
+            print("add edge:"+str(edgeLocation[0])+str(G.VertexIndex[nearest_point]))
             G.addEdge((edgeLocation[1], G.VertexIndex[nearest_point]))
+            print("add edge:"+str(edgeLocation[1])+str(G.VertexIndex[nearest_point]))
+        print("nearest_point:"+str(nearest_point))
         intersection = Point(new_vertex.x, new_vertex.y)
         # calculate the intersection of line new_vertex-nearest_point and
         # obstacles
@@ -58,26 +60,31 @@ def RRT(E, G, I):
             for index in range(obs.number-1):
                 inter_temp = GetIntersection(nearest_point, new_vertex, obs.IndexVertex[
                                              index+1], obs.IndexVertex[index+2])
+                print("check:"+str(nearest_point)+str(new_vertex)+str(obs.IndexVertex[obs.number])+str(obs.IndexVertex[1]))
+                print("inter_temp:"+str(inter_temp))
                 if inter_temp != Point(-1, -1):  # there IS intersection
                     if ((intersection.x-nearest_point.x)**2+(intersection.y-nearest_point.y)**2) > ((inter_temp.x-nearest_point.x)**2+(inter_temp.y-nearest_point.y)**2):
                         intersection = inter_temp  # inter_temp is closer to nearest_point
             # need sepatate operation for last edge because of CIRCLE
-            inter_temp = GetIntersection(nearest_point, new_vertex, obs.IndexVertex[
-                                         obs.number], obs.IndexVertex[1])
-            if ((intersection.x-nearest_point.x)**2+(intersection.y-nearest_point.y)**2) > ((inter_temp.x-nearest_point.x)**2+(inter_temp.y-nearest_point.y)**2):
-                intersection = inter_temp
-        G.addVertex(intersection)
-        print("add new_vertex:"+str(intersection))
-        G.addEdge((G.VertexIndex[nearest_point], G.VertexIndex[intersection]))
+            #print(nearest_point.y==62.6197860825)
+            inter_temp = GetIntersection(nearest_point, new_vertex, obs.IndexVertex[obs.number], obs.IndexVertex[1])
+            print("check:"+str(nearest_point)+str(new_vertex)+str(obs.IndexVertex[obs.number])+str(obs.IndexVertex[1]))
+            print("inter_temp:"+str(inter_temp))
+            if inter_temp != Point(-1, -1): 
+                if ((intersection.x-nearest_point.x)**2+(intersection.y-nearest_point.y)**2) > ((inter_temp.x-nearest_point.x)**2+(inter_temp.y-nearest_point.y)**2):
+                    intersection = inter_temp
+        if intersection.distance(nearest_point)>0.001:
+            G.addVertex(intersection)
+            print("add new_vertex:"+str(intersection))
+            G.addEdge((G.VertexIndex[nearest_point], G.VertexIndex[intersection]))
         print(G)
         print("\n")
     if E.goal in G.VertexIndex:
-        print("goal is in the Graph!")
-        return True
+        print("goal cannot be added into the Graph!")
     else:
-        print("goal is not in the Graph")
-        return False
-
+        print("goal is not in the Graph!")
+        print("the graph is:\n"+str(G))
+        sys.exit()
 
 
 
@@ -91,6 +98,7 @@ def VCD(E, G):
     add start and goal to graph!!
     add start and goal to graph!!
     '''
+    G.addVertex(E.goal)
     SweepLines = []
     all_obs = []
     for obs in E.obstacles:
@@ -114,6 +122,8 @@ def VCD(E, G):
         for obs in E.obstacles:
             for vertex in obs.VertexIndex:
                 if next_vertex == vertex:
+                    print("vertex:"+str(vertex))
+                    print("obs now:"+str(obs))
                     index = obs.VertexIndex[vertex]
                     pre = Point(-1, -1)
                     pos = Point(-1, -1)
@@ -203,6 +213,11 @@ def VCD(E, G):
                 G.addVertex(p2)
                 G.addEdge((G.VertexIndex[center], G.VertexIndex[p1]))
                 G.addEdge((G.VertexIndex[center], G.VertexIndex[p2]))
+                #if possible, add start and goal to graph
+                if 0<=E.start.x<next_vertex.x:
+                    G.addEdge((0,G.VertexIndex[center]))
+                if 0<=E.goal.x<next_vertex.x:
+                    G.addEdge((1,G.VertexIndex[center]))
             # not the first line
             else:
                 # check every previous sweep line
@@ -244,13 +259,41 @@ def VCD(E, G):
                                 center = Point(
                                     (pre_l.x+next_vertex.x)/2, sum(connect_right)/len(connect_right))
                                 G.addVertex(center)
-                                print("Add new vertex now:"+str(center))
+                                #print("Add new vertex now:"+str(center))
                                 for right in connect_right:
                                     G.addVertex(Point(next_vertex.x, right))
-                                    print("Add new vertex now:" +
-                                          str(Point(next_vertex.x, right)))
+                                    #print("Add new vertex now:" +str(Point(next_vertex.x, right)))
                                     G.addEdge((G.VertexIndex[center], G.VertexIndex[
                                               Point(next_vertex.x, right)]))
+                                #if possible, add start and goal to graph
+                                if pre_l.x<=E.start.x<next_vertex.x:  #start 
+                                    inter = Point(-1, -1)
+                                    for obs in E.obstacles:
+                                        for index in range(obs.number-1):
+                                            inter_temp = GetIntersection(E.start, center, obs.IndexVertex[index+1], obs.IndexVertex[index+2])
+                                            if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                                inter = inter_temp
+                                        # need seperate operation for last edge
+                                        inter_temp = GetIntersection(E.start, center, obs.IndexVertex[obs.number], obs.IndexVertex[1])
+                                        if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                            inter = inter_temp
+                                    # if there is no interection, add start to graph
+                                    if inter == Point(-1, -1):
+                                        G.addEdge((0,G.VertexIndex[center]))
+                                if pre_l.x<=E.goal.x<next_vertex.x:
+                                    inter = Point(-1, -1)
+                                    for obs in E.obstacles:
+                                        for index in range(obs.number-1):
+                                            inter_temp = GetIntersection(E.goal, center, obs.IndexVertex[index+1], obs.IndexVertex[index+2])
+                                            if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                                inter = inter_temp
+                                        # need seperate operation for last edge
+                                        inter_temp = GetIntersection(E.goal, center, obs.IndexVertex[obs.number], obs.IndexVertex[1])
+                                        if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                            inter = inter_temp
+                                    # if there is no interection, add goal to graph
+                                    if inter == Point(-1, -1):
+                                        G.addEdge((1,G.VertexIndex[center]))
                                 for r in connect_right:
                                     middles_y.remove(r)
                             if len(middles_y)==0:
@@ -348,6 +391,37 @@ def VCD(E, G):
                             # G.addVertex(Point(pre_l.x,left))
                             G.addEdge(
                                 (G.VertexIndex[center], G.VertexIndex[Point(pre_l.x, left)]))
+                        
+                         #if possible, add start and goal to graph
+                        if pre_l.x<=E.start.x<next_vertex.x:  #start 
+                            inter = Point(-1, -1)
+                            for obs in E.obstacles:
+                                for index in range(obs.number-1):
+                                    inter_temp = GetIntersection(E.start, center, obs.IndexVertex[index+1], obs.IndexVertex[index+2])
+                                    if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                        inter = inter_temp
+                                # need seperate operation for last edge
+                                inter_temp = GetIntersection(E.start, center, obs.IndexVertex[obs.number], obs.IndexVertex[1])
+                                if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                    inter = inter_temp
+                            # if there is no interection, add start to graph
+                            if inter == Point(-1, -1):
+                                G.addEdge((0,G.VertexIndex[center]))
+                        if pre_l.x<=E.goal.x<next_vertex.x:  #goal 
+                            inter = Point(-1, -1)
+                            for obs in E.obstacles:
+                                for index in range(obs.number-1):
+                                    inter_temp = GetIntersection(E.goal, center, obs.IndexVertex[index+1], obs.IndexVertex[index+2])
+                                    if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                        inter = inter_temp
+                                # need seperate operation for last edge
+                                inter_temp = GetIntersection(E.goal, center, obs.IndexVertex[obs.number], obs.IndexVertex[1])
+                                if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
+                                    inter = inter_temp
+                            # if there is no interection, add goal to graph
+                            if inter == Point(-1, -1):
+                                G.addEdge((1,G.VertexIndex[center]))
+
                         break
                     if i == 0 and len(connect_right) == 0:
                         print("ERROR: cannot find pre SweepLine!")
@@ -367,6 +441,10 @@ def VCD(E, G):
     last_y = ((pre_l.middle[0]+pre_l.middle[1])/2+E.y_max/2)/2
     center = Point(last_x, last_y)
     G.addVertex(center)
+    if pre_l.x<=E.start.x<=E.x_max:
+        G.addEdge((0,G.VertexIndex[center]))
+    if pre_l.x<=E.goal.x<=E.x_max:
+        G.addEdge((1,G.VertexIndex[center]))
     if pre_l.type != 1:
         print("wrong type for last two line")
         exit()
@@ -375,3 +453,24 @@ def VCD(E, G):
     G.addEdge((G.VertexIndex[center], G.VertexIndex[
               Point(pre_l.x, pre_l.middle[1])]))
 
+<<<<<<< HEAD
+=======
+<<<<<<< HEAD
+
+random.seed(1)
+E = parse("test3.txt")
+print(str(E))
+G = Graph(E.start)
+#RRT(E,G,10)
+VCD(E,G)
+print("\n\n"+str(G))
+
+path=A_star(G, 1, 27)
+print("\n\n",path)
+
+p=Point(290,290)
+print(str(p.distance(Point(60.0,183.092129464))))
+print(str(p.distance(Point(60.0,183.092129464))))
+=======
+>>>>>>> origin/master
+>>>>>>> refs/remotes/origin/master
