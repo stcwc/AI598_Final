@@ -8,6 +8,7 @@ A* algorithm accomplishment.
 @author: Wangchao Sheng
 """
 import heapq
+import sys
 
 def A_star(graph, s_index, g_index):
     
@@ -42,6 +43,7 @@ def A_star(graph, s_index, g_index):
                 heapq.heappush(queue,TreeNode(edge[0],temp,dis))
     if len(path)==0:
         print("[Error] No path can be found between start and goal. Please check the graph.")
+        sys.exit()
     return path 
       
 class TreeNode:
