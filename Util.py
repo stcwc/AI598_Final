@@ -43,7 +43,7 @@ class Point:
         
 class Graph:
     def __init__(self,p):
-        #p is the start point
+        #p is the initial point
         self.VertexIndex={p:0}
         self.IndexVertex={0:p}
         self.edges=[]
