@@ -9,6 +9,7 @@ define the classes of Point, Graph, Obstacle, Environment.
 """
 
 import sys
+import random
 
 class Point:
     def __init__(self,x,y):
@@ -36,7 +37,7 @@ class Point:
         else:
             return 0
     def __hash__(self):
-        return hash(str(self.x)+","+str(self.y))
+        return hash(str(self.x*1.0)+","+str(self.y*1.0))
     def distance(self,p): # square of distance 
         return ((p.x-self.x)**2+(p.y-self.y)**2)
         
@@ -53,8 +54,8 @@ class Graph:
             output=output+str(i)+":"+str(self.IndexVertex[i])
         output=output+"\nEdges:"
         for edge in self.edges:
-            output=output+"("+str(edge[0])+","+str(edge[1])+") "
-        return output #to be contonue
+            output=output+"("+str(edge[0])+","+str(edge[1])+"),"
+        return output[:-1] #to be contonue
 
     def addVertex(self,p):
         self.VertexIndex[p]=self.VertexNumber
@@ -88,9 +89,9 @@ class Obstacle:
         self.vertexNumber=len(points)
         self.number=len(points)
     def __str__(self):
-        output="Obstacle:"
+        output="Obstacle:\n"
         for i in range(self.vertexNumber):
-            output=output+str(self.IndexVertex[i+1])+" "
+            output=output+str(i+1)+":"+str(self.IndexVertex[i+1])+"|"
         return output
 
     def getVertex(self,index):
@@ -102,10 +103,10 @@ class Obstacle:
 
 class Environment:
     def __init__(self,x,y,obs,start,goal):
-        self.obstacles=[]
         self.x_max=x
         self.y_max=y
         self.obstacles=obs
+        #self.checkObstacleConflict()  # Deal with conflict, in which there are more than two vertices on a vertical line, namely, share the same x.
         self.start=start
         self.goal=goal
     def __str__(self):
@@ -114,6 +115,25 @@ class Environment:
             output=output+str(obs)+"\n"
         output=output+"start point:"+str(self.start)+" end point:"+str(self.goal)+"\n"
         return output
+        
+    def checkObstacleConflict(self):
+        # Check if there are more than two vertices on a vertical line, namely, share the same x.
+        vx = set()
+        for obs in self.obstacles:
+            for v in obs.VertexIndex:
+                if v.x in vx:
+                    print("***v.x",v.x)
+                    print("###set:",vx)
+                    rand=random.uniform(-0.01,0.01)
+                    newpoint=Point(v.x+rand,v.y)
+                    index = obs.getIndex(v)
+                    obs.IndexVertex[index]=newpoint
+                    del(obs.VertexIndex[v])
+                    obs.VertexIndex[newpoint]=index
+                    vx.add(newpoint.x)
+                    print("[__init__ in Environment] One vertex conflict solved by adding a random epislon "+str(rand))
+                else:
+                    vx.add(v.x)
 
 class SweepLine:
     def __init__(self,x,middle,vertex,type):
