@@ -43,6 +43,10 @@ def GetIntersection(p1,p2,q1,q2):
 			if slop_p!=slop_q:
 				y=(q1.x-p1.x+slop_p*p1.y-slop_q*q1.y)*1.0/(slop_p-slop_q)
 				x=slop_p*(y-p1.y)+p1.x
+				print("y:"+str(y))
+				print("x:"+str(x))
+				print("slop:"+str(slop_p))
+				print("laef:"+str(y-p1.y))
 			# slop_p==slop_q:
 			elif (p1.x-slop_p*p1.y)!=(q1.x-slop_q*q1.x):
 				#print ("Line:",str(p1),"-",str(p2),"and Line:",str(q1),"-",str(q2)," have NO intersection!")
@@ -56,7 +60,7 @@ def GetIntersection(p1,p2,q1,q2):
 			elif (max(p1.y,p2.y)==min(q1.y,q2.y) or min(p1.y,p2.y)==max(q1.y,q2.y)):
 				return Point((slop_p*max(p1.y,p2.y)-slop_p*p1.y+p1.x),max(p1.y,p2.y)*1.0) if max(p1.y,p2.y)==min(q1.y,q2.y) else Point((slop_p*min(p1.y,p2.y)-slop_p*p1.y+p1.x),min(p1.y,p2.y)*1.0)
 
-	if (min(p1.x,p2.x)<=x<=max(p1.x,p2.x)) and (min(q1.x,q2.x)<=x<=max(q1.x,q2.x)):
+	if ((min(p1.x,p2.x)-0.0001)<=x<=(max(p1.x,p2.x)+0.0001)) and ((min(q1.x,q2.x)-0.0001)<=x<=(max(q1.x,q2.x)+0.0001)) and ((min(p1.y,p2.y)-0.0001)<=y<=(max(p1.y,p2.y)+0.0001)) and ((min(q1.y,q2.y)-0.0001)<=y<=(max(q1.y,q2.y)+0.0001)):
 		return Point(x,y)
 	else:
 		#print ("Line:",str(p1),"-",str(p2),"and Line:",str(q1),"-",str(q2)," have NO intersection!")
@@ -65,7 +69,8 @@ def GetIntersection(p1,p2,q1,q2):
 def NearestPoint(p1,p2,q):
 	# return the nearest point in the line segment p1-p2 to point q
 	# return Point(-1,-1) if point q is in the line segment p1-p2
-	if p1.y!=p2.y and q.x==(p1.x-p2.x)*(q.y-p1.y)/(p1.y-p2.y)+p1.x : 	# q is in the line  &  the line is horizontal
+	if p1.y!=p2.y and q.x==(p1.x-p2.x)*(q.y-p1.y)/(p1.y-p2.y)+p1.x : 	
+	# q is in the line  &  the line is horizontal
 		# q is NOT in the line segment
 		if q.y>max(p1.y,p2.y) or q.y<min(p1.y,p2.y) :
 			return Point(((p1.x-p2.x)*(max(p1.y,p2.y)-p1.y)/(p1.y-p2.y)+p1.x),max(p1.y,p2.y)) if q.y>max(p1.y,p2.y) else Point(((p1.x-p2.x)*(min(p1.y,p2.y)-p1.y)/(p1.y-p2.y)+p1.x),min(p1.y,p2.y))
@@ -96,7 +101,8 @@ def NearestPoint(p1,p2,q):
 				return Point(p1.x,min(p1.y,p2.y)) if (min(p1.y,p2.y)>=q.y) else Point(p1.x,max(p1.y,p2.y))
 		else: #oblique line
 			slop=(p1.x-p2.x)*1.0/(p1.y-p2.y)
-			y=(slop*p1.y-p1.x+q.y/slop)/(slop+1/slop)
+			
+			y=(slop*p1.y-p1.x+q.y/slop+q.x)/(slop+1/slop)
 			x=slop*(y-p1.y)+p1.x
 			if min(p1.y,p2.y)<y<max(p1.y,p2.y):
 				return Point(x,y)
@@ -105,5 +111,6 @@ def NearestPoint(p1,p2,q):
 
 		
 
-#print(GetIntersection(Point(80,0),Point(80,200),Point(120,20),Point(60,100)))
-#print(NearestPoint(Point(0,0),Point(1,1),Point(0,5)))
+#print(GetIntersection(Point(20.0,62.80),Point(229.132385693,51.0138051479),Point(20.0,180.0),Point(20.0,20.0)))
+print(GetIntersection(Point(40.3092732337,169.486747387),Point(68.6286663811,189.054139111),Point(60.0,160.0),Point(60.0,40.0)))
+#print(NearestPoint(Point(0,0),Point(1,1),Point(2,1)))
