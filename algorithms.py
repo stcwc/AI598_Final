@@ -44,28 +44,22 @@ def RRT(E, G, I):
             G.addVertex(nearest_point)
             G.addEdge((edgeLocation[0], G.VertexIndex[nearest_point]))
             G.addEdge((edgeLocation[1], G.VertexIndex[nearest_point]))
-        # calculate the intersection of line new_vertex-nearest_point and obstacles
+        # calculate the intersection between line segment from new_vertex to nearest_point and obstacles
         intersection = Point(new_vertex.x, new_vertex.y)
         for obs in E.obstacles:
             for index in range(obs.number-1):
                 inter_temp = GetIntersection(nearest_point, new_vertex, obs.IndexVertex[
                                              index+1], obs.IndexVertex[index+2])
-                print("check:"+str(nearest_point)+str(new_vertex)+str(obs.IndexVertex[obs.number])+str(obs.IndexVertex[1]))
-                print("inter_temp:"+str(inter_temp))
                 if inter_temp != Point(-1, -1):  # there IS intersection
-                    if ((intersection.x-nearest_point.x)**2+(intersection.y-nearest_point.y)**2) > ((inter_temp.x-nearest_point.x)**2+(inter_temp.y-nearest_point.y)**2):
+                    if intersection.distance(nearest_point) > inter_temp.distance(nearest_point):
                         intersection = inter_temp  # inter_temp is closer to nearest_point
             # need sepatate operation for last edge because of CIRCLE
-            #print(nearest_point.y==62.6197860825)
             inter_temp = GetIntersection(nearest_point, new_vertex, obs.IndexVertex[obs.number], obs.IndexVertex[1])
-            print("check:"+str(nearest_point)+str(new_vertex)+str(obs.IndexVertex[obs.number])+str(obs.IndexVertex[1]))
-            print("inter_temp:"+str(inter_temp))
             if inter_temp != Point(-1, -1): 
-                if ((intersection.x-nearest_point.x)**2+(intersection.y-nearest_point.y)**2) > ((inter_temp.x-nearest_point.x)**2+(inter_temp.y-nearest_point.y)**2):
+                if intersection.distance(nearest_point) > inter_temp.distance(nearest_point):
                     intersection = inter_temp
         if intersection.distance(nearest_point)>0.001:
             G.addVertex(intersection)
-            print("add new_vertex:"+str(intersection))
             G.addEdge((G.VertexIndex[nearest_point], G.VertexIndex[intersection]))
         print(G)
         print("\n")
