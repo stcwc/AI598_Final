@@ -43,10 +43,6 @@ def GetIntersection(p1,p2,q1,q2):
 			if slop_p!=slop_q:
 				y=(q1.x-p1.x+slop_p*p1.y-slop_q*q1.y)*1.0/(slop_p-slop_q)
 				x=slop_p*(y-p1.y)+p1.x
-				print("y:"+str(y))
-				print("x:"+str(x))
-				print("slop:"+str(slop_p))
-				print("laef:"+str(y-p1.y))
 			# slop_p==slop_q:
 			elif (p1.x-slop_p*p1.y)!=(q1.x-slop_q*q1.x):
 				#print ("Line:",str(p1),"-",str(p2),"and Line:",str(q1),"-",str(q2)," have NO intersection!")
@@ -110,7 +106,6 @@ def NearestPoint(p1,p2,q):
 				return p1 if ((p1.x-q.x)**2+(p1.y-q.y)**2)<((p2.x-q.x)**2+(p2.y-q.y)**2) else p2
 
 		
-
+# following code is for test only 
 #print(GetIntersection(Point(20.0,62.80),Point(229.132385693,51.0138051479),Point(20.0,180.0),Point(20.0,20.0)))
-print(GetIntersection(Point(40.3092732337,169.486747387),Point(68.6286663811,189.054139111),Point(60.0,160.0),Point(60.0,40.0)))
 #print(NearestPoint(Point(0,0),Point(1,1),Point(2,1)))
