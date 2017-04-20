@@ -67,6 +67,7 @@ def RRT(E, I):
         print("Goal cannot be added into the Graph!")
         print("The graph is:\n"+str(G))
         sys.exit()
+    return G
 
 
 def VCD(E):
@@ -438,6 +439,7 @@ def VCD(E):
               Point(pre_l.x, pre_l.middle[0])]))
     G.addEdge((G.VertexIndex[center], G.VertexIndex[
               Point(pre_l.x, pre_l.middle[1])]))
+    return G
 
 
 
