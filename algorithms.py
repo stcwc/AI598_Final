@@ -15,14 +15,16 @@ import sys
 from Parser import parse
 from A_star import A_star
 
-def RRT(E, G, I):
+def RRT(E, I):
     # add first vertex to graph
     '''
     implement RRT
     E: working environment, including obstacles, start point, goal point
-    G: initial graph with only start point
     I: number of iteration 
     '''
+    # initiate the graph with start point in it
+    G = Graph(E.start)
+    #start iteration
     for i in range(I):
         if i == I-1: # last iteration, should try to add goal point into graph
             new_vertex = E.goal
@@ -61,44 +63,33 @@ def RRT(E, G, I):
         if intersection.distance(nearest_point)>0.001:
             G.addVertex(intersection)
             G.addEdge((G.VertexIndex[nearest_point], G.VertexIndex[intersection]))
-        print(G)
-        print("\n")
-    if E.goal in G.VertexIndex:
-        print("goal cannot be added into the Graph!")
-    else:
-        print("goal is not in the Graph!")
-        print("the graph is:\n"+str(G))
+    if E.goal not in G.VertexIndex:
+        print("Goal cannot be added into the Graph!")
+        print("The graph is:\n"+str(G))
         sys.exit()
+    return G
 
 
-
-def VCD(E, G):
+def VCD(E):
     '''
-    transform object!!!
-    transform object!!!
-    transform object!!!
-    add start and goal to graph!!
-    add start and goal to graph!!
-    add start and goal to graph!!
-    add start and goal to graph!!
+    impliment VCD
+    E: working environment, including obstacles, start point, goal point
     '''
+    # initiate graph with start point in it
+    G = Graph(E.start)
     G.addVertex(E.goal)
     SweepLines = []
+    #sort all obstacle vertices in  from left to rignt
     all_obs = []
     for obs in E.obstacles:
         for vertex in obs.VertexIndex:
             all_obs.append(vertex)
     all_obs.sort()
-    print("obs list:")
-    for o in all_obs:
-        print(str(o))
+    # check each obstacle vertex from left to right
     for i in range(len(all_obs)):
         next_vertex = all_obs[i]
-        print("\n\nGraph:"+str(G))
-        print("SweepLines:")
         for sl in SweepLines:
             print(str(sl))
-        print("Now examine obs vertex:"+str(next_vertex))
         type_vertex = 0
         inter_up = E.y_max
         inter_below = 0
@@ -106,12 +97,10 @@ def VCD(E, G):
         for obs in E.obstacles:
             for vertex in obs.VertexIndex:
                 if next_vertex == vertex:
-                    print("vertex:"+str(vertex))
-                    print("obs now:"+str(obs))
                     index = obs.VertexIndex[vertex]
                     pre = Point(-1, -1)
                     pos = Point(-1, -1)
-                    # list pre and post vertex
+                    # find pre and post vertex
                     if 1 < index < obs.vertexNumber:
                         pre = obs.IndexVertex[index-1]
                         pos = obs.IndexVertex[index+1]
@@ -123,34 +112,29 @@ def VCD(E, G):
                         pos = obs.IndexVertex[1]
                     # determine the vertex type
                     if (pre.x > vertex.x and pos.x > vertex.x and pre.y > pos.y) or (pre.x < vertex.x and pos.x < vertex.x and pre.y < pos.y):
-                        print("type 1")
-                        type_vertex = 1
+                        type_vertex = 1  # type 1
                         inter_up = E.y_max
                         inter_below = 0
                     elif (pre.x > vertex.x and pos.x > vertex.x and pre.y < pos.y):
-                        print("type 4")
-                        type_vertex = 4
+                        type_vertex = 4  # type 4
                         inter_up = vertex.y
                         inter_below = vertex.y
                     elif (pre.x < vertex.x and pos.x < vertex.x and pre.y > pos.y):
-                        print("type 5")
-                        type_vertex = 5
+                        type_vertex = 5  # type 5
                         inter_up = vertex.y
                         inter_below = vertex.y
                     elif pre.x < vertex.x < pos.x:
-                        print("type 3")
-                        type_vertex = 3
+                        type_vertex = 3  # type 3
                         inter_up = vertex.y
                         inter_below = 0
                     elif pos.x < vertex.x < pre.x:
-                        print("type 2")
-                        type_vertex = 2
+                        type_vertex = 2  # type 4
                         inter_up = E.y_max
                         inter_below = vertex.y
                     else:
-                        print("wrong type!")
+                        print("cannot determine type!")
                         exit()
-        # find the inter_up and inter_below
+        # find the highest point and lowest point in the sweep line
         for obs in E.obstacles:
             for index in range(obs.number-1):
                 inter_temp = GetIntersection(Point(next_vertex.x, 0), Point(
@@ -172,8 +156,8 @@ def VCD(E, G):
                 inter_up = inter_temp.y
             elif inter_below < inter_temp.y < next_vertex.y:
                 inter_below = inter_temp.y
-        # second part
-        # add vertex and edge to Graph
+        # find the previous sweep line
+        # if the current sweep line is type 1 or 2 or 3
         if type_vertex == 1 or type_vertex == 2 or type_vertex == 3:
             # denote the middles and vertices of the next sweep line
             if type_vertex == 1:
@@ -186,7 +170,7 @@ def VCD(E, G):
                 middles_y = [(inter_up+inter_below)/2]
                 middles_yy = [(inter_up+inter_below)/2]
                 verteices_y = [inter_up, inter_below]
-            # first line
+            # if the current sweep line is the first one
             if len(SweepLines) == 0:
                 center = Point(next_vertex.x/2, (E.y_max/2 +
                                                  (middles_y[0]+middles_y[1])/2)/2)
@@ -197,21 +181,17 @@ def VCD(E, G):
                 G.addVertex(p2)
                 G.addEdge((G.VertexIndex[center], G.VertexIndex[p1]))
                 G.addEdge((G.VertexIndex[center], G.VertexIndex[p2]))
-                #if possible, add start and goal to graph
+                #if possible, add start and goal point to graph
                 if 0<=E.start.x<next_vertex.x:
                     G.addEdge((0,G.VertexIndex[center]))
                 if 0<=E.goal.x<next_vertex.x:
                     G.addEdge((1,G.VertexIndex[center]))
-            # not the first line
+            # current sweep line is not the first line
             else:
                 # check every previous sweep line
                 while (len(middles_y) != 0):
-                    print("middles_y:"+str(middles_y))
                     for i in range(len(SweepLines)-1, -1, -1):
                         pre_l = SweepLines[i]
-                        print(len(SweepLines))
-                        print(i)
-                        print("examine sweep line:"+str(pre_l))
                         # figure out the type of previous sweep line
                         if pre_l.type == 5:
                             continue
@@ -224,29 +204,22 @@ def VCD(E, G):
                                         inter_temp = GetIntersection(Point(pre_l.x, pre_l.vertex[0]), Point(
                                             next_vertex.x, y), obs.IndexVertex[index+1], obs.IndexVertex[index+2])
                                         if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
-                                            print("obs line: "+str(obs.IndexVertex[index+1])+"-"+str(obs.IndexVertex[index+2]))
                                             inter = inter_temp
-                                            print("interection:"+str(inter_temp))
-                                            print("distance:"+str(inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))))
                                     # need seperate operation for last edge
                                     inter_temp = GetIntersection(Point(pre_l.x, pre_l.vertex[0]), Point(
                                         next_vertex.x, y), obs.IndexVertex[obs.number], obs.IndexVertex[1])
                                     if inter_temp != Point(-1, -1) and inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))>0.1:
-                                        print("obs line: "+str(obs.IndexVertex[obs.number])+"-"+str(obs.IndexVertex[1]))
                                         inter = inter_temp
-                                        print("interection:"+str(inter_temp))
-                                        print("distance:"+str(inter_temp.distance(Point(pre_l.x, pre_l.vertex[0]))))
                                 # determine if there is interection
                                 if inter == Point(-1, -1):
                                     connect_right.append(y)
+                            # if this previous sweep line is qualified, we should add the center point and corresponding edges
                             if len(connect_right) != 0:
                                 center = Point(
                                     (pre_l.x+next_vertex.x)/2, sum(connect_right)/len(connect_right))
                                 G.addVertex(center)
-                                #print("Add new vertex now:"+str(center))
                                 for right in connect_right:
                                     G.addVertex(Point(next_vertex.x, right))
-                                    #print("Add new vertex now:" +str(Point(next_vertex.x, right)))
                                     G.addEdge((G.VertexIndex[center], G.VertexIndex[
                                               Point(next_vertex.x, right)]))
                                 #if possible, add start and goal to graph
@@ -280,7 +253,7 @@ def VCD(E, G):
                                         G.addEdge((1,G.VertexIndex[center]))
                                 for r in connect_right:
                                     middles_y.remove(r)
-                            if len(middles_y)==0:
+                            if len(middles_y)==0: # if no need to check previous sweep line any more
                                 break
                         if pre_l.type == 1 or pre_l.type == 2 or pre_l.type == 3:
                             print("pre line type:",pre_l.type)
@@ -366,9 +339,11 @@ def VCD(E, G):
                         exit()
             l = SweepLine(next_vertex.x, middles_yy, verteices_y, type_vertex)
             SweepLines.append(l)
+        # if the current sweep line is type 4, no need to find previous sweep line
         elif type_vertex == 4:
             l = SweepLine(next_vertex.x, [], [inter_up], type_vertex)
             SweepLines.append(l)
+        # if the current sweep line is type 5, similar procedure as if type =1 or 2 or 3
         elif type_vertex == 5:
             middles_y = []
             verteices_y = [inter_up]
@@ -446,11 +421,9 @@ def VCD(E, G):
             print("wrond type!")
             sys.exit()
     # add last vertex into graph
-    print("SweepLines:")
     for sl in SweepLines:
         print("\n"+str(sl))
     pre_l = SweepLines[-1]
-    print("pre_l.middle"+str(pre_l.middle))
     last_x = (pre_l.x+E.x_max)/2
     last_y = ((pre_l.middle[0]+pre_l.middle[1])/2+E.y_max/2)/2
     center = Point(last_x, last_y)
@@ -466,20 +439,7 @@ def VCD(E, G):
               Point(pre_l.x, pre_l.middle[0])]))
     G.addEdge((G.VertexIndex[center], G.VertexIndex[
               Point(pre_l.x, pre_l.middle[1])]))
+    return G
 
 
-random.seed(1)
-E = parse("test4.txt")
-print(str(E))
-G = Graph(E.start)
-#RRT(E,G,10)
-VCD(E,G)
-print("\n\n"+str(G))
-
-path=A_star(G, 0, 1)
-print("\n\n",path)
-
-p=Point(290,290)
-print(str(p.distance(Point(60.0,183.092129464))))
-print(str(p.distance(Point(60.0,183.092129464))))
 
