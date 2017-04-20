@@ -1,25 +1,23 @@
 #from test import test
 from Util import Point, Graph, Obstacle, Environment
+import random
+from Parser import parse
+from algorithms import VCD, RRT
 
+random.seed(1)
+E = parse("test3.txt")
 
-p=Point(1,2)
-b=Point(1.0,2.0)
-print(p==b)
+print(str(E))
+#print(str(i) for i in E.obstacles)
+#print(E.obstacles[1])
 
+G = Graph(E.start)
+VCD(E,G)
+print("\n\n"+str(G))
 
-g=Graph(p)
-#g.addVertex(b)
-g.addVertex(Point(4,6))
-g.addVertex(Point(3,7))
-g.addEdge((0,1))
-print(str(g))
-print(str(g.getVertex(3)))
-print(str(g.getIndex(Point(3,9))))
-
-o=Obstacle([Point(1,1),Point(2,1),Point(2,2)])
-print(str(o))
-print(str(o.getVertex(4)))
-print(str(o.getIndex(Point(3,9))))
+path=A_star(G, 15, 18)
+print("\npath:\n",path)
+''''''
 
 #e=Environment(300,200)
 #e.addObstacle(o)

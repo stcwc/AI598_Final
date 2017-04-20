@@ -11,8 +11,6 @@ Achieve Vertical Cell Decomposition and RRT
 from Util import Point, Graph, Obstacle, Environment, SweepLine
 from Geometry import GetIntersection, NearestPoint
 import random
-from Parser import parse
-from A_star import A_star
 import sys
 
 def RRT(E, G, I):
@@ -114,6 +112,8 @@ def VCD(E, G):
         for obs in E.obstacles:
             for vertex in obs.VertexIndex:
                 if next_vertex == vertex:
+                    print("vertex:"+str(vertex))
+                    print("obs now:"+str(obs))
                     index = obs.VertexIndex[vertex]
                     pre = Point(-1, -1)
                     pos = Point(-1, -1)
@@ -375,16 +375,3 @@ def VCD(E, G):
     G.addEdge((G.VertexIndex[center], G.VertexIndex[
               Point(pre_l.x, pre_l.middle[1])]))
 
-
-random.seed(1)
-E = parse("test3.txt")
-print(str(E))
-'''
-print(str(E))
-G = Graph(E.start)
-VCD(E,G)
-print("\n\n"+str(G))
-
-path=A_star(G, 1, 27)
-print("\n\n",path)
-'''
