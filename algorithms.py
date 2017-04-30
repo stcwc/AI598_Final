@@ -64,9 +64,8 @@ def RRT(E, I):
             G.addVertex(intersection)
             G.addEdge((G.VertexIndex[nearest_point], G.VertexIndex[intersection]))
     if E.goal not in G.VertexIndex:
-        print("Goal cannot be added into the Graph!")
-        print("Please increase the interation number!")
-        print("The graph is:\n"+str(G))
+        print("[ERROR] Goal cannot be added into the Graph. Please increase the interation number!")
+        #print("The graph is:\n"+str(G))
         sys.exit()
     return G
 
