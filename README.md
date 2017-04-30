@@ -1,4 +1,4 @@
-#Group members:
+#Group members:         NetID:
     Yi Hou,             yh523
     Wangchao Sheng,     ws333
 
@@ -11,8 +11,8 @@
 
 # Run instruction:
     Command line
-        for VCD: $ python main.py input.txt VCD
-        for RRT: $ python main.py input.txt RRT 1000        //1000 is the number of iterations of RRT.
+        for VCD: $ python main.py input.txt output.txt VCD
+        for RRT: $ python main.py input.txt output.txt RRT 1000        //1000 is the number of iterations of RRT.
 
 
 

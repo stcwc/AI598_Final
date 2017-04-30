@@ -31,5 +31,6 @@ def main():
     file.truncate()
     file.write(str(G)+"\n"+spath[:-1])
     print("[Success] Output has been written into 'output.txt'.")
+    file.close()
     
 main()
