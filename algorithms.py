@@ -425,4 +425,3 @@ def VCD(E):
     return G
 
 
-

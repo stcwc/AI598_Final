@@ -49,10 +49,10 @@ class Graph:
         self.edges=[]
         self.VertexNumber=1
     def __str__(self):
-        output="Vertex:"
+        output=""
         for i in range(self.VertexNumber):
-            output=output+str(i)+":"+str(self.IndexVertex[i])
-        output=output+"\nEdges:"
+            output=output+str(i)+":"+str(self.IndexVertex[i])+","
+        output=output[:-1]+"\n"
         for edge in self.edges:
             output=output+"("+str(edge[0])+","+str(edge[1])+"),"
         return output[:-1] #to be contonue
