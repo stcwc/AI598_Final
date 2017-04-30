@@ -6,7 +6,7 @@ from A_star import *
 import sys
 
 def main():
-    random.seed(1)
+    #random.seed(1)
     if len(sys.argv)==4 and sys.argv[3]=="VCD":
         E = parse(sys.argv[1])
         print("......Doing VCD......")
